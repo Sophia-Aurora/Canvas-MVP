@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas MVP</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="toolbar">
+        <div class="toolbar-group">
+          <button class="tool-btn" data-tool="select" title="选择">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-dasharray="5,5"
+            >
+              <rect x="4" y="4" width="16" height="16" rx="2" />
+            </svg>
+          </button>
+          <button class="tool-btn" data-tool="shape" title="图形">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="8" cy="8" r="4" />
+              <rect x="12" y="12" width="8" height="8" />
+            </svg>
+          </button>
+          <button class="tool-btn" data-tool="image" title="图片">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="4" y="4" width="16" height="16" rx="2" />
+              <path d="M4 18 L8 10 L12 14 L16 8 L20 18 Z" fill="currentColor" />
+            </svg>
+          </button>
+          <button class="tool-btn" data-tool="text" title="文本">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="4" y="4" width="16" height="16" rx="2" />
+              <line x1="8" y1="8" x2="16" y2="8" />
+              <line x1="12" y1="8" x2="12" y2="16" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="main-area">
+        <aside class="properties-panel" id="propertiesPanel">
+          <div class="panel-header">属性</div>
+          <div class="panel-content">
+            <!-- 形状侧边栏内容 -->
+            <div class="sidebar-content" id="shapeSidebar">
+              <!-- 形状选择 -->
+              <div class="property-section">
+                <div class="section-title">形状</div>
+                <div class="shape-grid">
+                  <button class="shape-item" data-shape="line">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                  </button>
+                  <button class="shape-item" data-shape="rect">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <rect x="5" y="5" width="14" height="14" />
+                    </svg>
+                  </button>
+                  <button class="shape-item" data-shape="circle">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <circle cx="12" cy="12" r="7" />
+                    </svg>
+                  </button>
+                  <button class="shape-item" data-shape="ellipse">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <ellipse cx="12" cy="12" rx="8" ry="5" />
+                    </svg>
+                  </button>
+                  <button class="shape-item" data-shape="triangle">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="M12 5L5 19h14L12 5z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 颜色选择 -->
+              <div class="property-section">
+                <div class="section-title">颜色</div>
+                <div class="color-tabs">
+                  <button class="color-tab active" data-tab="stroke">
+                    边框
+                  </button>
+                  <button class="color-tab" data-tab="fill">背景</button>
+                </div>
+                <div class="color-grid">
+                  <button
+                    class="color-item active"
+                    data-color="#b8c4ce"
+                  ></button>
+                  <button class="color-item" data-color="#d4c8bc"></button>
+                  <button class="color-item" data-color="#c4cebc"></button>
+                  <button class="color-item" data-color="#cebcb8"></button>
+                  <button class="color-item" data-color="#bcb8c4"></button>
+                  <button class="color-item" data-color="#c4bcb8"></button>
+                  <button class="color-item" data-color="#bcc4bc"></button>
+                  <button class="color-item" data-color="#cec4bc"></button>
+                  <button class="color-item" data-color="#c4bcc4"></button>
+                  <button class="color-item" data-color="#bccece"></button>
+                  <button class="color-item" data-color="#cecebc"></button>
+                  <button class="color-item" data-color="#cebcce"></button>
+                </div>
+              </div>
+
+              <!-- 透明度 -->
+              <div class="property-section">
+                <div class="section-title">透明度</div>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="opacitySlider"
+                    min="0"
+                    max="100"
+                    value="100"
+                    class="slider"
+                  />
+                  <div class="slider-value" id="opacityValue">100%</div>
+                </div>
+              </div>
+
+              <!-- 边框宽度 -->
+              <div class="property-section">
+                <div class="section-title">边框宽度</div>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="borderWidthSlider"
+                    min="0"
+                    max="20"
+                    value="2"
+                    class="slider"
+                  />
+                  <div class="slider-value" id="borderWidthValue">2px</div>
+                </div>
+              </div>
+
+              <!-- 大小 -->
+              <div class="property-section">
+                <div class="section-title">大小</div>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="sizeSlider"
+                    min="10"
+                    max="200"
+                    value="100"
+                    class="slider"
+                  />
+                  <div class="slider-value" id="sizeValue">100%</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 文本侧边栏内容 -->
+            <div class="sidebar-content" id="textSidebar">
+              <!-- 字体选择 -->
+              <div class="property-section">
+                <div class="section-title">字体</div>
+                <div class="font-selector">
+                  <div class="font-display" id="fontDisplay">宋体</div>
+                  <div class="font-dropdown" id="fontDropdown">
+                    <div class="font-option selected" data-font="宋体">
+                      宋体
+                    </div>
+                    <div class="font-option" data-font="黑体">黑体</div>
+                    <div class="font-option" data-font="楷体">楷体</div>
+                    <div class="font-option" data-font="微软雅黑">微软雅黑</div>
+                    <div class="font-option" data-font="Arial">Arial</div>
+                    <div class="font-option" data-font="Times New Roman">
+                      Times New Roman
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 颜色选择 -->
+              <div class="property-section">
+                <div class="section-title">颜色</div>
+                <div class="color-tabs">
+                  <button class="color-tab active" data-tab="stroke">
+                    边框
+                  </button>
+                  <button class="color-tab" data-tab="fill">背景</button>
+                </div>
+                <div class="color-grid">
+                  <button
+                    class="color-item active"
+                    data-color="#b8c4ce"
+                  ></button>
+                  <button class="color-item" data-color="#d4c8bc"></button>
+                  <button class="color-item" data-color="#c4cebc"></button>
+                  <button class="color-item" data-color="#cebcb8"></button>
+                  <button class="color-item" data-color="#bcb8c4"></button>
+                  <button class="color-item" data-color="#c4bcb8"></button>
+                  <button class="color-item" data-color="#bcc4bc"></button>
+                  <button class="color-item" data-color="#cec4bc"></button>
+                  <button class="color-item" data-color="#c4bcc4"></button>
+                  <button class="color-item" data-color="#bccece"></button>
+                  <button class="color-item" data-color="#cecebc"></button>
+                  <button class="color-item" data-color="#cebcce"></button>
+                </div>
+              </div>
+
+              <!-- 透明度 -->
+              <div class="property-section">
+                <div class="section-title">透明度</div>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="textOpacitySlider"
+                    min="0"
+                    max="100"
+                    value="100"
+                    class="slider"
+                  />
+                  <div class="slider-value" id="textOpacityValue">100%</div>
+                </div>
+              </div>
+
+              <!-- 大小 -->
+              <div class="property-section">
+                <div class="section-title">大小</div>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="textSizeSlider"
+                    min="10"
+                    max="200"
+                    value="100"
+                    class="slider"
+                  />
+                  <div class="slider-value" id="textSizeValue">100%</div>
+                </div>
+              </div>
+
+              <!-- 粗体和斜体 -->
+              <div class="property-section">
+                <div class="section-title">样式</div>
+                <div class="style-buttons">
+                  <button class="style-btn" id="boldBtn" title="粗体">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
+                      <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
+                    </svg>
+                    <span class="style-tooltip">粗体</span>
+                  </button>
+                  <button class="style-btn" id="italicBtn" title="斜体">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <line x1="19" y1="4" x2="10" y2="4" />
+                      <line x1="14" y1="20" x2="5" y2="20" />
+                      <line x1="15" y1="4" x2="9" y2="20" />
+                    </svg>
+                    <span class="style-tooltip">斜体</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 图片侧边栏内容 -->
+            <div class="sidebar-content" id="imageSidebar">
+              <!-- 滤镜 -->
+              <div class="property-section">
+                <div class="section-title">滤镜</div>
+                <div class="filter-grid">
+                  <button class="filter-item active" data-filter="none">
+                    原图
+                  </button>
+                  <button class="filter-item" data-filter="grayscale">
+                    灰度
+                  </button>
+                  <button class="filter-item" data-filter="brightness">
+                    亮度
+                  </button>
+                  <button class="filter-item" data-filter="contrast">
+                    对比度
+                  </button>
+                  <button class="filter-item" data-filter="saturation">
+                    饱和度
+                  </button>
+                </div>
+              </div>
+
+              <!-- 大小 -->
+              <div class="property-section">
+                <div class="section-title">
+                  大小
+                  <button class="scale-toggle" id="scaleToggle">
+                    <span class="scale-dot"></span>
+                    比例
+                  </button>
+                </div>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="imageSizeSlider"
+                    min="10"
+                    max="200"
+                    value="100"
+                    class="slider"
+                  />
+                  <div class="slider-value" id="imageSizeValue">100%</div>
+                </div>
+              </div>
+
+              <!-- 透明度 -->
+              <div class="property-section">
+                <div class="section-title">透明度</div>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="imageOpacitySlider"
+                    min="0"
+                    max="100"
+                    value="100"
+                    class="slider"
+                  />
+                  <div class="slider-value" id="imageOpacityValue">100%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <main class="canvas-container">
+          <canvas id="canvas"></canvas>
+        </main>
+      </div>
+    </div>
+
+    <!-- 文件选择对话框 -->
+    <div class="file-dialog" id="fileDialog">
+      <div class="dialog-content">
+        <h3>选择图片文件</h3>
+        <p>请选择 PNG 或 JPEG 格式的图片</p>
+        <input type="file" id="fileInput" accept=".png,.jpg,.jpeg" />
+        <div class="dialog-actions">
+          <button id="cancelBtn">取消</button>
+          <button id="confirmBtn">确定</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 错误提示 -->
+    <div class="error-toast" id="errorToast">
+      <p>请选择 PNG 或 JPEG 格式的图片</p>
+    </div>
+
+    <script src="js/tools.js"></script>
+    <script src="js/element.js"></script>
+    <script src="js/canvas.js"></script>
+    <script src="js/interaction.js"></script>
+  </body>
+</html>

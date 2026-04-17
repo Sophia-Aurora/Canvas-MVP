@@ -1,0 +1,7 @@
+# 告诉trae不要读什么文件
+node_modules/
+dist/
+build/
+.git/
+*.log
+*.md
