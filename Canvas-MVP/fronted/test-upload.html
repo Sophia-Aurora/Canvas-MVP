@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片上传测试</title>
+</head>
+<body>
+    <h1>图片上传测试</h1>
+    <input type="file" id="testFileInput" accept="image/png,image/jpeg,image/jpg">
+    <button onclick="testUpload()">测试上传</button>
+    <div id="result"></div>
+
+    <script>
+        function testUpload() {
+            const fileInput = document.getElementById('testFileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                document.getElementById('result').innerHTML = '请选择文件';
+                return;
+            }
+
+            document.getElementById('result').innerHTML = '上传中...';
+
+            // 创建FormData对象
+            const formData = new FormData();
+            formData.append('image', file);
+
+            // 调用后端接口上传图片
+            fetch('http://localhost:3000/assets/images', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => {
+                console.log('响应状态:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('响应数据:', data);
+                document.getElementById('result').innerHTML = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                console.error('上传错误:', error);
+                document.getElementById('result').innerHTML = '上传失败: ' + error.message;
+            });
+        }
+    </script>
+</body>
+</html>

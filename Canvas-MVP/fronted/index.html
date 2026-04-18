@@ -68,15 +68,35 @@
               />
             </svg>
           </button>
+          <button class="tool-btn" data-tool="file" title="文件">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+              />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+            </svg>
+          </button>
         </div>
       </header>
 
       <div class="main-area">
         <aside class="properties-panel" id="propertiesPanel">
-          <div class="panel-header">属性</div>
           <div class="panel-content">
             <!-- 形状侧边栏内容 -->
             <div class="sidebar-content" id="shapeSidebar">
+              <div class="sidebar-header">
+                <div class="section-title">图形</div>
+                <button class="close-sidebar-btn" data-sidebar="shapeSidebar">
+                  ×
+                </button>
+              </div>
               <!-- 形状选择 -->
               <div class="property-section">
                 <div class="section-title">形状</div>
@@ -258,6 +278,12 @@
 
             <!-- 文本侧边栏内容 -->
             <div class="sidebar-content" id="textSidebar">
+              <div class="sidebar-header">
+                <div class="section-title">文本</div>
+                <button class="close-sidebar-btn" data-sidebar="textSidebar">
+                  ×
+                </button>
+              </div>
               <!-- 字体选择 -->
               <div class="property-section">
                 <div class="section-title">字体</div>
@@ -412,26 +438,28 @@
 
             <!-- 图片侧边栏内容 -->
             <div class="sidebar-content" id="imageSidebar">
-              <!-- 滤镜 -->
-              <div class="property-section">
-                <div class="section-title">滤镜</div>
-                <div class="filter-grid">
-                  <button class="filter-item active" data-filter="none">
-                    原图
-                  </button>
-                  <button class="filter-item" data-filter="grayscale">
-                    灰度
-                  </button>
-                  <button class="filter-item" data-filter="brightness">
-                    亮度
-                  </button>
-                  <button class="filter-item" data-filter="contrast">
-                    对比度
-                  </button>
-                  <button class="filter-item" data-filter="saturation">
-                    饱和度
-                  </button>
-                </div>
+              <div class="sidebar-header">
+                <div class="section-title">图片</div>
+                <button class="close-sidebar-btn" data-sidebar="imageSidebar">
+                  ×
+                </button>
+              </div>
+              <div class="filter-grid">
+                <button class="filter-item active" data-filter="none">
+                  原图
+                </button>
+                <button class="filter-item" data-filter="grayscale">
+                  灰度
+                </button>
+                <button class="filter-item" data-filter="brightness">
+                  亮度
+                </button>
+                <button class="filter-item" data-filter="contrast">
+                  对比度
+                </button>
+                <button class="filter-item" data-filter="saturation">
+                  饱和度
+                </button>
               </div>
 
               <!-- 大小 -->
@@ -469,8 +497,14 @@
 
             <!-- 画笔侧边栏内容 -->
             <div class="sidebar-content" id="penSidebar">
+              <div class="sidebar-header">
+                <div class="section-title">画笔</div>
+                <button class="close-sidebar-btn" data-sidebar="penSidebar">
+                  ×
+                </button>
+              </div>
               <!-- 颜色选择 -->
-              <div class="property-section" id="penColorSection">
+              <div class="property-section">
                 <div class="section-title">颜色</div>
                 <div class="color-grid" id="penColorGrid">
                   <button
@@ -568,6 +602,21 @@
                 </div>
               </div>
             </div>
+
+            <!-- 文件侧边栏内容 -->
+            <div class="sidebar-content" id="fileSidebar">
+              <div class="sidebar-header">
+                <div class="section-title">画布文件</div>
+                <button class="close-sidebar-btn" data-sidebar="fileSidebar">
+                  ×
+                </button>
+              </div>
+              <div class="file-actions">
+                <button class="action-btn" id="newCanvasBtn">新建画布</button>
+                <button class="action-btn" id="saveCanvasBtn">保存画布</button>
+                <button class="action-btn" id="openCanvasBtn">打开画布</button>
+              </div>
+            </div>
           </div>
         </aside>
 
@@ -593,6 +642,38 @@
     <!-- 错误提示 -->
     <div class="error-toast" id="errorToast">
       <p>请选择 PNG 或 JPEG 格式的图片</p>
+    </div>
+
+    <!-- 画布列表弹窗 -->
+    <div class="canvas-list-dialog" id="canvasListDialog">
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h3>我的画布</h3>
+          <button class="close-btn" id="closeCanvasListBtn">×</button>
+        </div>
+        <div class="canvas-list" id="canvasList"></div>
+      </div>
+    </div>
+
+    <!-- 新建画布弹窗 -->
+    <div class="new-canvas-dialog" id="newCanvasDialog">
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h3>新建画布</h3>
+          <button class="close-btn" id="closeNewCanvasBtn">×</button>
+        </div>
+        <div class="dialog-body">
+          <input
+            type="text"
+            id="canvasNameInput"
+            placeholder="请输入画布名称"
+          />
+        </div>
+        <div class="dialog-actions">
+          <button id="cancelNewCanvasBtn">取消</button>
+          <button id="confirmNewCanvasBtn">创建</button>
+        </div>
+      </div>
     </div>
 
     <script src="js/canvas.js" type="module"></script>

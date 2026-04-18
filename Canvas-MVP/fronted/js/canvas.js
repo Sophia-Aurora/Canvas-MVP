@@ -8,18 +8,56 @@
 
 import { initToolbars } from "./toolbars.js";
 import { elements, currentElement } from "./main.js";
+import {
+  initGraphDrawing,
+  drawRectElement,
+  drawLineElement,
+  drawCircleElement,
+  drawEllipseElement,
+  drawTriangleElement,
+} from "./graph.js";
+import { drawImageElement } from "./photo.js";
 
 // 全局视图控制变量
 let scale = 1; // 缩放比例
 let offsetX = 0; // 画布偏移 X
 let offsetY = 0; // 画布偏移 Y
 let isCanvasDragging = false; // 是否正在拖拽画布
+let isDrawing = false; // 是否正在绘制
 let lastMouseX = 0; // 鼠标按下时的 X 坐标
 let lastMouseY = 0; // 鼠标按下时的 Y 坐标
+let currentTool = null; // 当前选中的工具，null 表示未选中
+
+// 暴露 currentTool 到全局作用域，供 toolbars.js 使用
+window.currentTool = currentTool;
+
+// 暴露 isSidebarOpen 到全局作用域，用于控制画布拖拽
+window.isSidebarOpen = false;
 
 // 画布元素
 let canvas = null;
 let ctx = null;
+
+/**
+ * 将鼠标事件坐标转换为画布实际逻辑坐标
+ * 用于解决因画布缩放、平移导致的鼠标位置与画布实际坐标错位问题
+ * @param {MouseEvent} e - 鼠标事件对象
+ * @returns {{x: number, y: number}} 转换后的画布坐标
+ */
+function getCanvasCoordinate(e) {
+  // 获取canvas元素在浏览器窗口的位置信息
+  // 这里的画布说的是我们在页面上可以看到的，有高度有宽度的矩形区域
+  const rect = canvas.getBoundingClientRect();
+  // client是鼠标相对于浏览器的位置，减去rect.left得到鼠标相对于可以看得见的这块画布左边的位置
+  //rect.left是画布左边到窗口左边的距离
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+
+  return {
+    x: (mouseX - offsetX) / scale,
+    y: (mouseY - offsetY) / scale,
+  };
+}
 
 // 初始化应用
 function initApp() {
@@ -28,6 +66,13 @@ function initApp() {
 
   // 初始化工具栏（这个在toolbars.js里面）
   initToolbars();
+
+  // 自动创建临时画布
+  if (!window.currentCanvasId) {
+    window.currentCanvasId = "temp-" + Date.now();
+    window.currentCanvasName = "";
+    console.log("自动创建临时画布:", window.currentCanvasId);
+  }
 
   // 其他初始化代码...
 }
@@ -55,6 +100,9 @@ function initCanvas() {
   // 初始化视图控制事件
   initViewControls();
 
+  // 初始化图形绘制事件
+  initGraphDrawing(canvas);
+
   console.log("Canvas initialized successfully!");
 }
 
@@ -65,18 +113,28 @@ function initCanvas() {
 function initViewControls() {
   // 鼠标按下事件 - 开始拖拽
   canvas.addEventListener("mousedown", (e) => {
-    isCanvasDragging = true;
-    lastMouseX = e.clientX;
-    lastMouseY = e.clientY;
-    canvas.style.cursor = "grabbing";
+    // 只有未选中工具、左侧面板未打开、且未发生拖拽时才允许拖动画布
+    if (
+      window.currentTool === null &&
+      !window.isSidebarOpen &&
+      !window.isDrawing
+    ) {
+      isCanvasDragging = true;
+      //记录 当前鼠标的 X 坐标和 Y 坐标（相对于浏览器可视区）
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+      canvas.style.cursor = "grabbing";
+    }
   });
 
   // 鼠标移动事件 - 拖拽画布
   canvas.addEventListener("mousemove", (e) => {
-    if (isCanvasDragging) {
+    // 只有未选中工具且正在拖拽时才执行
+    if (window.currentTool === null && isCanvasDragging) {
       const deltaX = e.clientX - lastMouseX;
       const deltaY = e.clientY - lastMouseY;
 
+      // 相对于当前触发事件的元素的左上角（在这里是canvas）
       offsetX += deltaX;
       offsetY += deltaY;
 
@@ -90,13 +148,15 @@ function initViewControls() {
   // 鼠标释放事件 - 结束拖拽
   canvas.addEventListener("mouseup", () => {
     isCanvasDragging = false;
-    canvas.style.cursor = "grab";
+    isDrawing = false;
+    canvas.style.cursor = window.currentTool === null ? "grab" : "default";
   });
 
-  // 鼠标离开事件 - 结束拖拽
+  // 鼠标离开画布事件 - 结束拖拽
   canvas.addEventListener("mouseleave", () => {
     isCanvasDragging = false;
-    canvas.style.cursor = "grab";
+    isDrawing = false;
+    canvas.style.cursor = window.currentTool === null ? "grab" : "default";
   });
 
   // 滚轮事件 - 缩放画布
@@ -208,24 +268,30 @@ function render() {
     switch (element.type) {
       case "line":
         // 绘制直线
+        drawLineElement(ctx, element);
         break;
       case "rect":
         // 绘制矩形
+        drawRectElement(ctx, element);
         break;
       case "circle":
         // 绘制圆形
+        drawCircleElement(ctx, element);
         break;
       case "ellipse":
         // 绘制椭圆
+        drawEllipseElement(ctx, element);
         break;
       case "triangle":
         // 绘制三角形
+        drawTriangleElement(ctx, element);
         break;
       case "text":
         // 绘制文字
         break;
       case "image":
         // 绘制图片
+        drawImageElement(ctx, element);
         break;
       case "pen":
         // 绘制画笔轨迹
@@ -271,9 +337,11 @@ export {
   offsetX,
   offsetY,
   isCanvasDragging,
+  currentTool,
   elements,
   currentElement,
   initApp,
   initCanvas,
   render,
+  getCanvasCoordinate,
 };

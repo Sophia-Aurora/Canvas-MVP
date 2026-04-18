@@ -1,5 +1,7 @@
 // 工具栏功能实现
 
+import { currentTool } from "./canvas.js";
+
 // 获取DOM元素
 const toolButtons = document.querySelectorAll(".tool-btn");
 const propertiesPanel = document.getElementById("propertiesPanel");
@@ -7,11 +9,23 @@ const shapeSidebar = document.getElementById("shapeSidebar");
 const textSidebar = document.getElementById("textSidebar");
 const imageSidebar = document.getElementById("imageSidebar");
 const penSidebar = document.getElementById("penSidebar");
+const fileSidebar = document.getElementById("fileSidebar");
 const fileDialog = document.getElementById("fileDialog");
 const errorToast = document.getElementById("errorToast");
 const fileInput = document.getElementById("fileInput");
 const cancelBtn = document.getElementById("cancelBtn");
 const confirmBtn = document.getElementById("confirmBtn");
+const newCanvasBtn = document.getElementById("newCanvasBtn");
+const saveCanvasBtn = document.getElementById("saveCanvasBtn");
+const openCanvasBtn = document.getElementById("openCanvasBtn");
+const canvasListDialog = document.getElementById("canvasListDialog");
+const canvasList = document.getElementById("canvasList");
+const closeCanvasListBtn = document.getElementById("closeCanvasListBtn");
+const newCanvasDialog = document.getElementById("newCanvasDialog");
+const canvasNameInput = document.getElementById("canvasNameInput");
+const closeNewCanvasBtn = document.getElementById("closeNewCanvasBtn");
+const cancelNewCanvasBtn = document.getElementById("cancelNewCanvasBtn");
+const confirmNewCanvasBtn = document.getElementById("confirmNewCanvasBtn");
 
 // 初始化工具栏事件监听
 function initToolbars() {
@@ -30,40 +44,109 @@ function initToolbars() {
 
   // 初始化字体下拉菜单事件
   initFontSelector();
+
+  // 初始化画布操作事件
+  initCanvasActions();
+
+  // 初始化关闭侧边栏按钮事件
+  initCloseSidebarEvents();
+
+  // 初始化形状选择事件
+  initShapeSelection();
+}
+
+// 初始化关闭侧边栏按钮事件
+function initCloseSidebarEvents() {
+  const closeButtons = document.querySelectorAll(".close-sidebar-btn");
+  closeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      // 关闭所有侧边栏
+      closeAllSidebars();
+    });
+  });
+}
+
+// 关闭所有侧边栏
+function closeAllSidebars() {
+  // 隐藏属性面板
+  propertiesPanel.classList.remove("show");
+
+  // 移除所有侧边栏的active状态
+  shapeSidebar.classList.remove("active");
+  textSidebar.classList.remove("active");
+  imageSidebar.classList.remove("active");
+  penSidebar.classList.remove("active");
+  fileSidebar.classList.remove("active");
+
+  // 移除所有工具按钮的active状态
+  toolButtons.forEach((btn) => btn.classList.remove("active"));
+
+  // 重置当前工具
+  window.currentTool = null;
+
+  // 重置当前元素，确保面板关闭后不能修改属性
+  window.currentElement = null;
+
+  // 设置侧边栏关闭状态，恢复画布拖拽
+  window.isSidebarOpen = false;
 }
 
 // 处理工具按钮点击
 function handleToolClick(button, index) {
+  // 检查是否是重复点击同一按钮
+  const isAlreadyActive = button.classList.contains("active");
+
   // 移除所有工具按钮的活动状态
   toolButtons.forEach((btn) => btn.classList.remove("active"));
-  // 添加当前按钮的活动状态
-  button.classList.add("active");
 
   // 隐藏所有侧边栏内容
   shapeSidebar.classList.remove("active");
   textSidebar.classList.remove("active");
   imageSidebar.classList.remove("active");
   penSidebar.classList.remove("active");
+  fileSidebar.classList.remove("active");
 
-  // 根据按钮索引处理不同功能
-  switch (index) {
-    case 0: // 选择工具
-      propertiesPanel.classList.remove("show");
-      break;
-    case 1: // 图形工具
-      showSidebar(shapeSidebar);
-      break;
-    case 2: // 图片工具
-      // 隐藏属性面板，只显示文件选择对话框
-      propertiesPanel.classList.remove("show");
-      openFileDialog();
-      break;
-    case 3: // 文本工具
-      showSidebar(textSidebar);
-      break;
-    case 4: // 画笔工具
-      showSidebar(penSidebar);
-      break;
+  if (isAlreadyActive) {
+    // 重复点击，取消选中
+    propertiesPanel.classList.remove("show");
+    // 重置当前工具
+    window.currentTool = null;
+    // 重置当前元素，确保面板关闭后不能修改属性
+    window.currentElement = null;
+  } else {
+    // 添加当前按钮的活动状态
+    button.classList.add("active");
+
+    // 根据按钮索引处理不同功能
+    switch (index) {
+      case 0: // 选择工具
+        propertiesPanel.classList.remove("show");
+        window.currentTool = null;
+        break;
+      case 1: // 图形工具
+        showSidebar(shapeSidebar);
+        // 保持当前工具，默认是直线
+        // 不重置currentTool，因为initShapeSelection已经默认选中了直线
+        break;
+      case 2: // 图片工具
+        // 隐藏属性面板，只显示文件选择对话框
+        propertiesPanel.classList.remove("show");
+        openFileDialog();
+        window.currentTool = "image";
+        break;
+      case 3: // 文本工具
+        showSidebar(textSidebar);
+        window.currentTool = "text";
+        break;
+      case 4: // 画笔工具
+        showSidebar(penSidebar);
+        window.currentTool = "pen";
+        break;
+      case 5: // 文件工具
+        showSidebar(fileSidebar);
+        window.currentTool = "file";
+        break;
+    }
   }
 }
 
@@ -73,6 +156,8 @@ function showSidebar(sidebar) {
   propertiesPanel.classList.add("show");
   // 激活对应侧边栏内容
   sidebar.classList.add("active");
+  // 设置侧边栏打开状态，禁用画布拖拽
+  window.isSidebarOpen = true;
 }
 
 // 初始化文件对话框事件
@@ -126,8 +211,10 @@ function handleFileSelection() {
   // 显示图片侧边栏
   showSidebar(imageSidebar);
 
-  // 这里可以添加处理图片的逻辑
-  console.log("Selected image:", file);
+  // 导入photo.js中的函数处理图片
+  import("./photo.js").then(({ handleImageFile }) => {
+    handleImageFile(file);
+  });
 }
 
 // 显示错误提示
@@ -182,14 +269,40 @@ function initShapeSelection() {
 
   const shapeItems = shapeGrid.querySelectorAll(".shape-item");
 
-  shapeItems.forEach((item) => {
+  shapeItems.forEach((item, index) => {
     item.addEventListener("click", () => {
       // 移除所有形状项的active状态
       shapeItems.forEach((other) => other.classList.remove("active"));
       // 添加当前形状项的active状态
       item.classList.add("active");
+
+      // 根据选择的形状更新当前工具
+      switch (index) {
+        case 0: // 直线
+          window.currentTool = "line";
+          break;
+        case 1: // 矩形
+          window.currentTool = "rect";
+          break;
+        case 2: // 圆形
+          window.currentTool = "circle";
+          break;
+        case 3: // 椭圆
+          window.currentTool = "ellipse";
+          break;
+        case 4: // 三角形
+          window.currentTool = "triangle";
+          break;
+        default:
+          window.currentTool = "shape";
+      }
     });
   });
+
+  // 默认选中第一个形状（直线）
+  if (shapeItems.length > 0) {
+    shapeItems[0].click();
+  }
 }
 
 // 初始化边框/背景切换事件
@@ -272,6 +385,369 @@ function initFontSelector() {
       italicBtn.classList.toggle("active");
     });
   }
+}
+
+// 初始化画布操作事件
+function initCanvasActions() {
+  // 新建画布按钮
+  if (newCanvasBtn) {
+    newCanvasBtn.addEventListener("click", () => {
+      newCanvasDialog.classList.add("show");
+      canvasNameInput.value = "";
+      canvasNameInput.focus();
+    });
+  }
+
+  // 保存画布按钮
+  if (saveCanvasBtn) {
+    saveCanvasBtn.addEventListener("click", () => {
+      saveCanvas();
+    });
+  }
+
+  // 打开画布按钮
+  if (openCanvasBtn) {
+    openCanvasBtn.addEventListener("click", () => {
+      openCanvasList();
+    });
+  }
+
+  // 关闭画布列表弹窗
+  if (closeCanvasListBtn) {
+    closeCanvasListBtn.addEventListener("click", () => {
+      canvasListDialog.classList.remove("show");
+    });
+  }
+
+  // 关闭新建画布弹窗
+  if (closeNewCanvasBtn) {
+    closeNewCanvasBtn.addEventListener("click", () => {
+      newCanvasDialog.classList.remove("show");
+    });
+  }
+
+  // 取消新建画布
+  if (cancelNewCanvasBtn) {
+    cancelNewCanvasBtn.addEventListener("click", () => {
+      newCanvasDialog.classList.remove("show");
+    });
+  }
+
+  // 确认新建画布
+  if (confirmNewCanvasBtn) {
+    confirmNewCanvasBtn.addEventListener("click", () => {
+      createNewCanvas();
+    });
+  }
+
+  // 回车键创建画布
+  if (canvasNameInput) {
+    canvasNameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        createNewCanvas();
+      }
+    });
+  }
+
+  // 点击弹窗外部关闭
+  canvasListDialog.addEventListener("click", (e) => {
+    if (e.target === canvasListDialog) {
+      canvasListDialog.classList.remove("show");
+    }
+  });
+
+  newCanvasDialog.addEventListener("click", (e) => {
+    if (e.target === newCanvasDialog) {
+      newCanvasDialog.classList.remove("show");
+    }
+  });
+}
+
+// 生成唯一ID
+function generateUUID() {
+  return "canvas-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9);
+}
+
+// 创建新画布
+function createNewCanvas() {
+  const name = canvasNameInput.value.trim();
+
+  if (!name) {
+    alert("请输入画布名称");
+    return;
+  }
+
+  const id = generateUUID();
+
+  // 检查是否是从临时画布转换而来
+  if (window.tempCanvasData) {
+    // 使用临时保存的画布数据
+    const canvasData = window.tempCanvasData;
+    window.tempCanvasData = null;
+
+    fetch("http://localhost:3000/canvases", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, name, data: JSON.stringify(canvasData) }),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 201 || result.code === 200) {
+          window.currentCanvasId = id;
+          window.currentCanvasName = name;
+
+          newCanvasDialog.classList.remove("show");
+          alert("画布保存成功");
+        } else {
+          alert("保存画布失败: " + result.message);
+        }
+      })
+      .catch((error) => {
+        alert("保存画布失败，请检查网络连接");
+        console.error("保存画布错误:", error);
+      });
+  } else {
+    // 创建新的空画布
+    fetch("http://localhost:3000/canvases", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, name, data: "" }),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 201 || result.code === 200) {
+          window.currentCanvasId = id;
+          window.currentCanvasName = name;
+
+          // 清空当前画布
+          import("./main.js").then(({ elements }) => {
+            elements.length = 0;
+            import("./canvas.js").then(({ render }) => {
+              import("./canvas.js").then(({ scale, offsetX, offsetY }) => {
+                scale = 1;
+                offsetX = 0;
+                offsetY = 0;
+                render();
+              });
+            });
+          });
+
+          newCanvasDialog.classList.remove("show");
+          alert("画布创建成功");
+        } else {
+          alert("创建画布失败: " + result.message);
+        }
+      })
+      .catch((error) => {
+        alert("创建画布失败，请检查网络连接");
+        console.error("创建画布错误:", error);
+      });
+  }
+}
+
+// 保存画布
+function saveCanvas() {
+  if (!window.currentCanvasId) {
+    alert("请先创建或打开一个画布");
+    return;
+  }
+
+  // 检查是否是临时画布
+  if (window.currentCanvasId.startsWith("temp-") || !window.currentCanvasName) {
+    // 弹出画布名称输入对话框
+    newCanvasDialog.classList.add("show");
+    canvasNameInput.value = window.currentCanvasName || "";
+    canvasNameInput.focus();
+
+    // 临时保存画布数据
+    window.tempCanvasData = {
+      elements: null,
+      scale: 1,
+      offsetX: 0,
+      offsetY: 0,
+    };
+
+    // 获取画布数据
+    import("./main.js").then(({ elements }) => {
+      import("./canvas.js").then((canvasModule) => {
+        window.tempCanvasData = {
+          elements: elements.map((el) => (el.toJSON ? el.toJSON() : el)),
+          scale: canvasModule.scale,
+          offsetX: canvasModule.offsetX,
+          offsetY: canvasModule.offsetY,
+        };
+      });
+    });
+  } else {
+    // 直接保存画布
+    saveCanvasData();
+  }
+}
+
+// 保存画布数据
+function saveCanvasData() {
+  // 获取画布数据
+  import("./main.js").then(({ elements }) => {
+    import("./canvas.js").then((canvasModule) => {
+      const canvasData = {
+        elements: elements.map((el) => (el.toJSON ? el.toJSON() : el)),
+        scale: canvasModule.scale,
+        offsetX: canvasModule.offsetX,
+        offsetY: canvasModule.offsetY,
+      };
+
+      if (window.currentCanvasId.startsWith("temp-")) {
+        // 创建新画布
+        const id = generateUUID();
+        const name = window.currentCanvasName;
+
+        fetch("http://localhost:3000/canvases", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id, name, data: JSON.stringify(canvasData) }),
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.code === 201 || result.code === 200) {
+              window.currentCanvasId = id;
+              alert("画布保存成功");
+            } else {
+              alert("保存画布失败: " + result.message);
+            }
+          })
+          .catch((error) => {
+            alert("保存画布失败，请检查网络连接");
+            console.error("保存画布错误:", error);
+          });
+      } else {
+        // 更新现有画布
+        fetch("http://localhost:3000/canvases/" + window.currentCanvasId, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: window.currentCanvasName,
+            data: JSON.stringify(canvasData),
+          }),
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.code === 200) {
+              alert("画布保存成功");
+            } else {
+              alert("保存画布失败: " + result.message);
+            }
+          })
+          .catch((error) => {
+            alert("保存画布失败，请检查网络连接");
+            console.error("保存画布错误:", error);
+          });
+      }
+    });
+  });
+}
+
+// 打开画布列表
+function openCanvasList() {
+  fetch("http://localhost:3000/canvases")
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.code === 200) {
+        renderCanvasList(result.data);
+        canvasListDialog.classList.add("show");
+      } else {
+        alert("获取画布列表失败: " + result.message);
+      }
+    })
+    .catch((error) => {
+      alert("获取画布列表失败，请检查网络连接");
+      console.error("获取画布列表错误:", error);
+    });
+}
+
+// 渲染画布列表
+function renderCanvasList(canvases) {
+  if (!canvases || canvases.length === 0) {
+    canvasList.innerHTML =
+      '<div class="canvas-list-empty">暂无画布，请先创建</div>';
+    return;
+  }
+
+  canvasList.innerHTML = canvases
+    .map(
+      (canvas) => `
+      <div class="canvas-item" data-id="${canvas.id}">
+        <div class="canvas-item-name">${canvas.name}</div>
+        <div class="canvas-item-date">更新时间: ${canvas.updated_at}</div>
+      </div>
+    `,
+    )
+    .join("");
+
+  // 为每个画布项添加点击事件
+  const canvasItems = canvasList.querySelectorAll(".canvas-item");
+  canvasItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      const id = item.dataset.id;
+      loadCanvas(id);
+    });
+  });
+}
+
+// 加载画布
+function loadCanvas(id) {
+  fetch("http://localhost:3000/canvases/" + id)
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.code === 200) {
+        const canvasData = JSON.parse(result.data.data || "{}");
+
+        window.currentCanvasId = id;
+        window.currentCanvasName = result.data.name;
+
+        // 加载元素
+        import("./main.js").then(({ elements, createElement }) => {
+          elements.length = 0;
+
+          if (canvasData.elements && Array.isArray(canvasData.elements)) {
+            canvasData.elements.forEach((el) => {
+              const element = createElement(el.type);
+              if (element && el) {
+                Object.assign(element, el);
+                elements.push(element);
+              }
+            });
+          }
+
+          // 加载视图状态
+          import("./canvas.js").then((canvasModule) => {
+            if (canvasData.scale !== undefined)
+              canvasModule.scale = canvasData.scale;
+            if (canvasData.offsetX !== undefined)
+              canvasModule.offsetX = canvasData.offsetX;
+            if (canvasData.offsetY !== undefined)
+              canvasModule.offsetY = canvasData.offsetY;
+            canvasModule.render();
+          });
+        });
+
+        canvasListDialog.classList.remove("show");
+        alert("画布加载成功");
+      } else {
+        alert("加载画布失败: " + result.message);
+      }
+    })
+    .catch((error) => {
+      alert("加载画布失败，请检查网络连接");
+      console.error("加载画布错误:", error);
+    });
 }
 
 // 导出初始化函数

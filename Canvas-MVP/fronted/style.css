@@ -141,15 +141,6 @@ body {
   transform: translateX(0);
 }
 
-.panel-header {
-  padding: 16px 20px;
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--text-primary);
-  border-bottom: 1px solid var(--border-color);
-  background-color: var(--bg-secondary);
-}
-
 .panel-content {
   flex: 1;
   padding: 16px;
@@ -598,14 +589,240 @@ body {
   color: var(--tool-image);
 }
 
+/* 侧边栏头部样式 */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-header .section-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 关闭侧边栏按钮 */
+.close-sidebar-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.close-sidebar-btn:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.close-sidebar-btn:active {
+  transform: scale(0.9);
+}
+
 /* 比例切换按钮 */
 .section-title {
   display: flex;
   align-items: center;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-secondary);
   margin-bottom: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+/* 文件工具栏样式 */
+.tool-btn[data-tool="file"] {
+  color: var(--tool-shape);
+}
+
+/* 文件侧边栏样式 */
+.file-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-btn {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.action-btn:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--tool-shape);
+}
+
+.action-btn:active {
+  transform: scale(0.98);
+}
+
+/* 画布列表弹窗 */
+.canvas-list-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.canvas-list-dialog.show {
+  display: flex;
+}
+
+.canvas-list-dialog .dialog-content {
+  background-color: var(--bg-primary);
+  border-radius: 8px;
+  width: 500px;
+  max-width: 90%;
+  max-height: 80vh;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dialog-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.close-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  color: var(--text-primary);
+}
+
+.canvas-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.canvas-item {
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.canvas-item:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--tool-shape);
+}
+
+.canvas-item:last-child {
+  margin-bottom: 0;
+}
+
+.canvas-item-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.canvas-item-date {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.canvas-list-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+}
+
+/* 新建画布弹窗 */
+.new-canvas-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.new-canvas-dialog.show {
+  display: flex;
+}
+
+.new-canvas-dialog .dialog-content {
+  background-color: var(--bg-primary);
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.dialog-body {
+  padding: 20px;
+}
+
+#canvasNameInput {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+#canvasNameInput:focus {
+  outline: none;
+  border-color: var(--tool-shape);
+}
+
+.new-canvas-dialog .dialog-actions {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
 }
