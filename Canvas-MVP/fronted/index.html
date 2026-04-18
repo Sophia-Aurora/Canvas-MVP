@@ -55,6 +55,19 @@
               <line x1="12" y1="8" x2="12" y2="16" />
             </svg>
           </button>
+          <button class="tool-btn" data-tool="pen" title="画笔">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M12 20h9" />
+              <path
+                d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"
+              />
+            </svg>
+          </button>
         </div>
       </header>
 
@@ -68,7 +81,7 @@
               <div class="property-section">
                 <div class="section-title">形状</div>
                 <div class="shape-grid">
-                  <button class="shape-item" data-shape="line">
+                  <button class="shape-item active" data-shape="line">
                     <svg
                       viewBox="0 0 24 24"
                       fill="none"
@@ -122,7 +135,7 @@
               </div>
 
               <!-- 颜色选择 -->
-              <div class="property-section">
+              <div class="property-section" id="shapeColorSection">
                 <div class="section-title">颜色</div>
                 <div class="color-tabs">
                   <button class="color-tab active" data-tab="stroke">
@@ -130,22 +143,67 @@
                   </button>
                   <button class="color-tab" data-tab="fill">背景</button>
                 </div>
-                <div class="color-grid">
+                <div class="color-grid" id="shapeColorGrid">
                   <button
                     class="color-item active"
-                    data-color="#b8c4ce"
+                    data-color="#8B9CAF"
+                    style="background-color: #8b9caf"
                   ></button>
-                  <button class="color-item" data-color="#d4c8bc"></button>
-                  <button class="color-item" data-color="#c4cebc"></button>
-                  <button class="color-item" data-color="#cebcb8"></button>
-                  <button class="color-item" data-color="#bcb8c4"></button>
-                  <button class="color-item" data-color="#c4bcb8"></button>
-                  <button class="color-item" data-color="#bcc4bc"></button>
-                  <button class="color-item" data-color="#cec4bc"></button>
-                  <button class="color-item" data-color="#c4bcc4"></button>
-                  <button class="color-item" data-color="#bccece"></button>
-                  <button class="color-item" data-color="#cecebc"></button>
-                  <button class="color-item" data-color="#cebcce"></button>
+                  <button
+                    class="color-item"
+                    data-color="#C4B7A6"
+                    style="background-color: #c4b7a6"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#A8B5A0"
+                    style="background-color: #a8b5a0"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#D4C4B0"
+                    style="background-color: #d4c4b0"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#B8A9A0"
+                    style="background-color: #b8a9a0"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#C9B8BC"
+                    style="background-color: #c9b8bc"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#A9B0A8"
+                    style="background-color: #a9b0a8"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#B5C0C4"
+                    style="background-color: #b5c0c4"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#C4C0B8"
+                    style="background-color: #c4c0b8"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#B8B5A8"
+                    style="background-color: #b8b5a8"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#A8B0B5"
+                    style="background-color: #a8b0b5"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#C0B8B0"
+                    style="background-color: #c0b8b0"
+                  ></button>
                 </div>
               </div>
 
@@ -221,30 +279,69 @@
               </div>
 
               <!-- 颜色选择 -->
-              <div class="property-section">
+              <div class="property-section" id="textColorSection">
                 <div class="section-title">颜色</div>
-                <div class="color-tabs">
-                  <button class="color-tab active" data-tab="stroke">
-                    边框
-                  </button>
-                  <button class="color-tab" data-tab="fill">背景</button>
-                </div>
-                <div class="color-grid">
+                <div class="color-grid" id="textColorGrid">
                   <button
                     class="color-item active"
-                    data-color="#b8c4ce"
+                    data-color="#9B8B9F"
+                    style="background-color: #9b8b9f"
                   ></button>
-                  <button class="color-item" data-color="#d4c8bc"></button>
-                  <button class="color-item" data-color="#c4cebc"></button>
-                  <button class="color-item" data-color="#cebcb8"></button>
-                  <button class="color-item" data-color="#bcb8c4"></button>
-                  <button class="color-item" data-color="#c4bcb8"></button>
-                  <button class="color-item" data-color="#bcc4bc"></button>
-                  <button class="color-item" data-color="#cec4bc"></button>
-                  <button class="color-item" data-color="#c4bcc4"></button>
-                  <button class="color-item" data-color="#bccece"></button>
-                  <button class="color-item" data-color="#cecebc"></button>
-                  <button class="color-item" data-color="#cebcce"></button>
+                  <button
+                    class="color-item"
+                    data-color="#A6B7C4"
+                    style="background-color: #a6b7c4"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#A0B5A8"
+                    style="background-color: #a0b5a8"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#B0C4B8"
+                    style="background-color: #b0c4b8"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#A9B8B0"
+                    style="background-color: #a9b8b0"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#BCB8C9"
+                    style="background-color: #bcb8c9"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#A8B0A0"
+                    style="background-color: #a8b0a0"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#C4B5C0"
+                    style="background-color: #c4b5c0"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#B8C0B5"
+                    style="background-color: #b8c0b5"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#A8B5B8"
+                    style="background-color: #a8b5b8"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#B0A8B5"
+                    style="background-color: #b0a8b5"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#B8C0B0"
+                    style="background-color: #b8c0b0"
+                  ></button>
                 </div>
               </div>
 
@@ -339,13 +436,7 @@
 
               <!-- 大小 -->
               <div class="property-section">
-                <div class="section-title">
-                  大小
-                  <button class="scale-toggle" id="scaleToggle">
-                    <span class="scale-dot"></span>
-                    比例
-                  </button>
-                </div>
+                <div class="section-title">大小</div>
                 <div class="slider-container">
                   <input
                     type="range"
@@ -372,6 +463,108 @@
                     class="slider"
                   />
                   <div class="slider-value" id="imageOpacityValue">100%</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 画笔侧边栏内容 -->
+            <div class="sidebar-content" id="penSidebar">
+              <!-- 颜色选择 -->
+              <div class="property-section" id="penColorSection">
+                <div class="section-title">颜色</div>
+                <div class="color-grid" id="penColorGrid">
+                  <button
+                    class="color-item active"
+                    data-color="#88A8C9"
+                    style="background-color: #88a8c9"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#A6C4B7"
+                    style="background-color: #a6c4b7"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#B5A0A8"
+                    style="background-color: #b5a0a8"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#C4B0A0"
+                    style="background-color: #c4b0a0"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#A0B0C4"
+                    style="background-color: #a0b0c4"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#B8C4B0"
+                    style="background-color: #b8c4b0"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#C4B8B8"
+                    style="background-color: #c4b8b8"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#B0B5C4"
+                    style="background-color: #b0b5c4"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#C0B5A6"
+                    style="background-color: #c0b5a6"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#A8B8B0"
+                    style="background-color: #a8b8b0"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#B5C0B5"
+                    style="background-color: #b5c0b5"
+                  ></button>
+                  <button
+                    class="color-item"
+                    data-color="#B0A8B8"
+                    style="background-color: #b0a8b8"
+                  ></button>
+                </div>
+              </div>
+
+              <!-- 画笔大小 -->
+              <div class="property-section">
+                <div class="section-title">画笔大小</div>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="penSizeSlider"
+                    min="1"
+                    max="50"
+                    value="5"
+                    class="slider"
+                  />
+                  <div class="slider-value" id="penSizeValue">5px</div>
+                </div>
+              </div>
+
+              <!-- 透明度 -->
+              <div class="property-section">
+                <div class="section-title">透明度</div>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="penOpacitySlider"
+                    min="0"
+                    max="100"
+                    value="100"
+                    class="slider"
+                  />
+                  <div class="slider-value" id="penOpacityValue">100%</div>
                 </div>
               </div>
             </div>
@@ -402,9 +595,12 @@
       <p>请选择 PNG 或 JPEG 格式的图片</p>
     </div>
 
-    <script src="js/tools.js"></script>
-    <script src="js/element.js"></script>
-    <script src="js/canvas.js"></script>
-    <script src="js/interaction.js"></script>
+    <script src="js/canvas.js" type="module"></script>
+    <script src="js/toolbars.js" type="module"></script>
+    <script src="js/choose.js" type="module"></script>
+    <script src="js/gragh.js" type="module"></script>
+    <script src="js/pen.js" type="module"></script>
+    <script src="js/photo.js" type="module"></script>
+    <script src="js/text.js" type="module"></script>
   </body>
 </html>

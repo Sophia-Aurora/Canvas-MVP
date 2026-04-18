@@ -11,6 +11,7 @@
   --tool-shape: #d5a889;
   --tool-image: #a8c5a8;
   --tool-text: #c9a8c9;
+  --tool-pen: #88a8c9;
 
   --panel-width: 220px;
   --toolbar-height: 56px;
@@ -23,7 +24,8 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   overflow: hidden;
@@ -106,6 +108,10 @@ body {
 
 .tool-btn[data-tool="text"] {
   color: var(--tool-text);
+}
+
+.tool-btn[data-tool="pen"] {
+  color: var(--tool-pen);
 }
 
 .main-area {
@@ -217,7 +223,7 @@ body {
 }
 
 .color-tab::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 6px;
   top: 50%;
@@ -351,7 +357,7 @@ body {
 }
 
 .font-display::after {
-  content: '';
+  content: "";
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-top: 5px solid var(--text-secondary);
@@ -545,10 +551,22 @@ body {
 }
 
 @keyframes fadeInOut {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
-  10% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  90% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  90% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
 }
 
 /* 图片侧边栏样式 */
@@ -584,48 +602,10 @@ body {
 .section-title {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
   margin-bottom: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-}
-
-.scale-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background-color: var(--bg-secondary);
-  font-size: 11px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.scale-toggle:hover {
-  background-color: var(--bg-tertiary);
-  border-color: var(--tool-image);
-}
-
-.scale-toggle.active {
-  background-color: rgba(168, 197, 168, 0.1);
-  border-color: var(--tool-image);
-}
-
-.scale-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: transparent;
-  border: 1px solid var(--border-color);
-  transition: all 0.2s ease;
-}
-
-.scale-toggle.active .scale-dot {
-  background-color: var(--tool-image);
-  border-color: var(--tool-image);
 }
