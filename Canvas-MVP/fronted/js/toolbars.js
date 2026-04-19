@@ -455,7 +455,9 @@ function initCanvasActions() {
 
   // 回车键创建画布
   if (canvasNameInput) {
+    //keydown是键盘点击事件
     canvasNameInput.addEventListener("keydown", (e) => {
+      //e.key是按下键的名称
       if (e.key === "Enter") {
         createNewCanvas();
       }
@@ -478,11 +480,17 @@ function initCanvasActions() {
 
 // 生成唯一ID
 function generateUUID() {
-  return "canvas-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9);
+  //Math.random().toString(36).substr(2, 9)是随机生成数
+  //额这个substr已经弃用了那我换一个吧，用substring代替
+  return (
+    "canvas-" + Date.now() + "-" + Math.random().toString(36).substring(2, 9)
+  );
 }
 
 // 创建新画布
 function createNewCanvas() {
+  //获取画布名称
+  //trim是去除字符串首尾空白字符
   const name = canvasNameInput.value.trim();
 
   if (!name) {
@@ -498,15 +506,25 @@ function createNewCanvas() {
     const canvasData = window.tempCanvasData;
     window.tempCanvasData = null;
 
+    // 向后端服务器发送请求
+    // fetch是网络请求api
     fetch("http://localhost:3000/canvases", {
+      //post是请求方法，告诉服务器要创建新数据
       method: "POST",
+      //告诉后端服务器发送的数据格式是JSON
       headers: {
         "Content-Type": "application/json",
       },
+      //发送的数据：id, name, data
       body: JSON.stringify({ id, name, data: JSON.stringify(canvasData) }),
     })
+      // 服务器返回的响应，把响应体解析成js对象
+      // 因为服务器常以json字符串形式返回数据，不是js对象
+      //then 是 JavaScript Promise 对象的方法 ，用于 处理异步操作的成功结果
       .then((response) => response.json())
+      //result是解析后的json对象
       .then((result) => {
+        // 200或201是HTTP成功状态代码
         if (result.code === 201 || result.code === 200) {
           window.currentCanvasId = id;
           window.currentCanvasName = name;
@@ -517,6 +535,7 @@ function createNewCanvas() {
           alert("保存画布失败: " + result.message);
         }
       })
+      //catch 是 JavaScript Promise 对象的方法 ，用于 捕获和处理异步操作中的错误 。
       .catch((error) => {
         alert("保存画布失败，请检查网络连接");
         console.error("保存画布错误:", error);
@@ -585,9 +604,18 @@ function saveCanvas() {
     };
 
     // 获取画布数据
+    // 导入main.js模块
     import("./main.js").then(({ elements }) => {
+      // 导入canvasjs模块
+      //canvasModule是整个整个模块对象
       import("./canvas.js").then((canvasModule) => {
+        //保存当前画布状态
+
         window.tempCanvasData = {
+          // 遍历所有图形（直线、矩形、圆形等）
+          // 如果图形有 toJSON 方法，就调用它转换成纯数据
+          // 如果没有，就直接保留原图形
+          // 这样做的目的是把图形对象转换成可以序列化成 JSON 的数据
           elements: elements.map((el) => (el.toJSON ? el.toJSON() : el)),
           scale: canvasModule.scale,
           offsetX: canvasModule.offsetX,
@@ -673,6 +701,7 @@ function openCanvasList() {
     .then((response) => response.json())
     .then((result) => {
       if (result.code === 200) {
+        //调用 renderCanvasList 函数，把从服务器获取的画布列表数据渲染到页面上 。
         renderCanvasList(result.data);
         canvasListDialog.classList.add("show");
       } else {
@@ -694,7 +723,10 @@ function renderCanvasList(canvases) {
   }
 
   canvasList.innerHTML = canvases
+    //遍历每一个画布对象
+    //给每一个画布对象生成html元素
     .map(
+      //生成一个字符串，就是打开的打开的那些东西
       (canvas) => `
       <div class="canvas-item" data-id="${canvas.id}">
         <div class="canvas-item-name">${canvas.name}</div>
@@ -702,6 +734,8 @@ function renderCanvasList(canvases) {
       </div>
     `,
     )
+    //- map() 返回一个包含 HTML 字符串的数组
+    //.join("") 把数组连接成一个完整的 HTML 字符串，
     .join("");
 
   // 为每个画布项添加点击事件

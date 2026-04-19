@@ -40,8 +40,7 @@ const selectionArea = {
  * 包含所有元素共有的通用属性
  */
 class BaseElement {
-
-    // 创建新对象的时候会调用它来给对象赋初始值
+  // 创建新对象的时候会调用它来给对象赋初始值
   constructor(type) {
     this.id = this.generateId();
     this.type = type;
@@ -69,7 +68,7 @@ class BaseElement {
     this.height = height;
   }
 
-//透明度
+  //透明度
   setOpacity(opacity) {
     this.opacity = Math.max(0, Math.min(1, opacity));
   }
@@ -86,7 +85,7 @@ class BaseElement {
     this.isSelected = !this.isSelected;
   }
 
- //获取元素边界，用于判断位置，检测碰撞，绘制选区等
+  //获取元素边界，用于判断位置，检测碰撞，绘制选区等
   getBounds() {
     return {
       x: this.x,
@@ -104,13 +103,17 @@ class BaseElement {
 
 //ShapeElement继承BaseElement的所有属性和方法
 class ShapeElement extends BaseElement {
+  //当创建新对象的时候，会调用constructor来给对象赋初始值
   constructor(type) {
+    //super是调用父类的constructor，给对象赋初始值
+    //super是调用父类的构造函数，括号里面就是父类的参数
     super(type);
     this.strokeColor = "#8B9CAF";
     this.fillColor = "transparent";
     this.lineWidth = 2;
   }
 
+  //不传颜色参数的时候，默认用上面的初始值，传入参数后会修改对应颜色
   setStrokeColor(color) {
     this.strokeColor = color;
   }
@@ -130,7 +133,9 @@ class ShapeElement extends BaseElement {
  */
 class LineElement extends ShapeElement {
   constructor() {
+    //ElementType.LINE 就是一个常量，值为 "line"，用 super() 传给父类，让父类知道这个元素是直线类型。
     super(ElementType.LINE);
+    //直线特有的属性，结束点的坐标
     this.x2 = 0;
     this.y2 = 0;
   }
@@ -372,6 +377,8 @@ class PenElement extends BaseElement {
  * 元素工厂函数
  * 根据类型创建对应的元素实例
  */
+//无论要创建什么类型的元素，都调用它
+//传入对应的类型常量（如 ElementType.LINE ）
 function createElement(type) {
   switch (type) {
     case ElementType.LINE:
@@ -451,6 +458,7 @@ const ElementManager = {
  * @param {string} type - 元素类型
  * @param {object} properties - 属性对象
  */
+//就是在属性那里改了颜色以后，要同步到元素上
 function syncPropertiesToElement(type, properties) {
   const element = createElement(type);
 

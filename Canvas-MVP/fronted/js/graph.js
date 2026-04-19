@@ -28,6 +28,7 @@ export function initGraphDrawing(canvas) {
   canvas.addEventListener("mousedown", (e) => {
     switch (window.currentTool) {
       case "rect":
+        //开始绘制矩形的函数
         startDrawingRect(e);
         break;
       case "line":

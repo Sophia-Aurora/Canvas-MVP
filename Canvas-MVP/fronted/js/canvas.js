@@ -50,10 +50,14 @@ function getCanvasCoordinate(e) {
   const rect = canvas.getBoundingClientRect();
   // client是鼠标相对于浏览器的位置，减去rect.left得到鼠标相对于可以看得见的这块画布左边的位置
   //rect.left是画布左边到窗口左边的距离
+  //计算鼠标在canvas元素内的原始像素位置
   const mouseX = e.clientX - rect.left;
   const mouseY = e.clientY - rect.top;
 
   return {
+    //减去offset是消除画布平移的影响
+    //offset是拖拽的距离
+    //得到的是实际相对于画布的坐标
     x: (mouseX - offsetX) / scale,
     y: (mouseY - offsetY) / scale,
   };
@@ -173,15 +177,26 @@ function initViewControls() {
     const scaleCenterY = (mouseY - offsetY) / scale;
 
     // 缩放比例
+    //e.deltaY 是鼠标滚轮的滚动值
+    //deltaY>0表示滚轮向上滚，<0表示滚轮向下滚
+    //每滚动一次，就缩放固定值
     const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-    const newScale = Math.max(0.5, Math.min(2, scale * zoomFactor));
+    //计算新的缩放比例
+    //添加限制
+    //如果要无限就写const newScale = scale * zoomFactor;
+    //无限缩放可能会影响绘制图形的坐标变换
+    const newScale = Math.max(0.1, Math.min(10, scale * zoomFactor));
 
     // 调整偏移量，使缩放以鼠标位置为中心
+    //计算新的缩放比例与旧缩放比例的比值
     const scaleRatio = newScale / scale;
+    //mouse是屏幕坐标
+    //scalecenter是鼠标在画布上的原始位置（缩放前的坐标）
     offsetX = mouseX - scaleCenterX * newScale;
     offsetY = mouseY - scaleCenterY * newScale;
 
     scale = newScale;
+    //然后重绘，在这里才是把画面中的元素变大变小
     render(); // 重绘画布
   });
 
@@ -262,10 +277,12 @@ function render() {
   // 4. 遍历 elements 数组绘制所有元素
   elements.forEach((element) => {
     // 设置透明度
+    //？？是空值合并操作符（如果左侧是 null/undefined，就用右侧的值）
     ctx.globalAlpha = element.opacity ?? 1;
 
     // 根据元素类型进行绘制
     switch (element.type) {
+      //这些都是自定义函数哦
       case "line":
         // 绘制直线
         drawLineElement(ctx, element);
@@ -320,6 +337,7 @@ function render() {
   });
 
   // 5. 恢复绘图状态
+  //就是恢复画笔的状态，把缩放值啥的都变成0，避免累加
   ctx.restore();
 }
 
