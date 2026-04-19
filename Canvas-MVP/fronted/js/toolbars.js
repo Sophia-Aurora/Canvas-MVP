@@ -32,10 +32,12 @@ function initToolbars() {
   // 为每个工具按钮添加点击事件
   toolButtons.forEach((button, index) => {
     button.addEventListener("click", () => {
+      //根据index值，打开不同侧边栏
       handleToolClick(button, index);
     });
   });
 
+  //这些初始化函数的定义在后面，具有模块化和易于查找错误的好处
   // 初始化文件对话框事件
   initFileDialogEvents();
 
@@ -69,6 +71,7 @@ function initCloseSidebarEvents() {
 // 关闭所有侧边栏
 function closeAllSidebars() {
   // 隐藏属性面板
+  //这里show处理的是面板的滑入滑出，active是显示与隐藏
   propertiesPanel.classList.remove("show");
 
   // 移除所有侧边栏的active状态
@@ -121,7 +124,8 @@ function handleToolClick(button, index) {
     switch (index) {
       case 0: // 选择工具
         propertiesPanel.classList.remove("show");
-        window.currentTool = null;
+        //window就是代表是全局变量
+        window.currentTool = "select";
         break;
       case 1: // 图形工具
         showSidebar(shapeSidebar);
@@ -229,6 +233,7 @@ function showErrorToast() {
 // 初始化颜色选择事件
 function initColorSelection() {
   // 形状侧边栏颜色选择
+  // 括号里是参数
   initColorGridEvents("shapeColorSection", "shapeColorGrid");
 
   // 文本侧边栏颜色选择
@@ -247,6 +252,7 @@ function initColorSelection() {
 // 初始化颜色网格事件
 function initColorGridEvents(sectionId, gridId) {
   const section = document.getElementById(sectionId);
+  //如果section不存在
   if (!section) return;
 
   const colorGrid = document.getElementById(gridId);
@@ -300,13 +306,16 @@ function initShapeSelection() {
   });
 
   // 默认选中第一个形状（直线）
+  //防止空数组调用报错
+  //click()原生方法，模拟被点击
   if (shapeItems.length > 0) {
     shapeItems[0].click();
   }
 }
 
-// 初始化边框/背景切换事件
+// 初始化边框/背景颜色切换事件
 function initColorTabSwitching() {
+  //配置要处理的区域
   const sections = [
     { sectionId: "shapeColorSection", gridId: "shapeColorGrid" },
   ];
@@ -315,6 +324,7 @@ function initColorTabSwitching() {
     const section = document.getElementById(sectionId);
     if (!section) return;
 
+    //获取背景，边框
     const colorTabs = section.querySelectorAll(".color-tab");
     const colorGrid = document.getElementById(gridId);
 
@@ -352,7 +362,10 @@ function initFontSelector() {
   }
 
   // 点击其他地方关闭下拉菜单
+  // 监听整个文档的点击事件，e是事件对象
   document.addEventListener("click", (e) => {
+    //e.target是点击的元素
+    //closest() 是 DOM 元素的 原生方法 ，用来 向上查找 匹配的祖先元素（包括元素本身）。就是点击的那个地方如果是下拉菜单里面的，那就整个事件为真。
     if (!e.target.closest(".font-selector")) {
       fontDropdown.classList.remove("show");
     }
