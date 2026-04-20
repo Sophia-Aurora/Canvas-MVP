@@ -163,6 +163,7 @@ function initRectPropertyEvents() {
 
   // 透明度滑块
   if (opacitySlider) {
+    //opacitySlider 就是一个 <input> HTML 元素
     opacitySlider.addEventListener("input", () => {
       const opacityValue = document.getElementById("opacityValue");
       if (opacityValue) {
@@ -170,6 +171,7 @@ function initRectPropertyEvents() {
       }
 
       if (window.currentElement) {
+        //opacitySlider 就是一个 <input> HTML 元素
         window.currentElement.opacity = opacitySlider.value / 100;
         render();
       }
@@ -282,13 +284,18 @@ function drawRect(e) {
  * @param {CanvasRenderingContext2D} ctx - 2D 绘图上下文
  * @param {object} element - 矩形元素
  */
+//前一个注重交互，这个注重渲染
 export function drawRectElement(ctx, element) {
+  // 开始绘制路径
   ctx.beginPath();
   // 处理负数宽度和高度的情况
   const rectX = element.width < 0 ? element.x + element.width : element.x;
   const rectY = element.height < 0 ? element.y + element.height : element.y;
   const rectWidth = Math.abs(element.width);
   const rectHeight = Math.abs(element.height);
+  //原生绘制方法，这种方法是添加到路径的方法
+  //就是一种规划，告诉canvas要绘制这种图形
+  //这种方法不会直接绘制，需要调用stroke或者fill来真正绘制
   ctx.rect(rectX, rectY, rectWidth, rectHeight);
   // 绘制边框
   ctx.strokeStyle = element.strokeColor || "#8B9CAF";
@@ -308,7 +315,9 @@ export function drawRectElement(ctx, element) {
  */
 export function drawLineElement(ctx, element) {
   ctx.beginPath();
+  //把画笔移动到指定点
   ctx.moveTo(element.x, element.y);
+  //从当前位置画线到指定点
   ctx.lineTo(element.x + element.width, element.y + element.height);
   // 绘制边框
   ctx.strokeStyle = element.strokeColor || "#8B9CAF";
@@ -324,11 +333,15 @@ export function drawLineElement(ctx, element) {
 export function drawCircleElement(ctx, element) {
   ctx.beginPath();
   // 使用元素的宽度作为直径（因为我们已经确保宽高相等）
+  //计算直径和半径
+  //直径 = 宽度的绝对值
   const diameter = Math.abs(element.width);
+  // 半径 = 直径的一半
   const radius = diameter / 2;
   // 计算元素的中心位置作为圆心
   const centerX = element.x + Math.abs(element.width) / 2;
   const centerY = element.y + Math.abs(element.height) / 2;
+  // 绘制弧类
   ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
   // 绘制边框
   ctx.strokeStyle = element.strokeColor || "#8B9CAF";
@@ -352,6 +365,7 @@ export function drawEllipseElement(ctx, element) {
   const radiusY = Math.abs(element.height) / 2;
   const centerX = element.x + radiusX;
   const centerY = element.y + radiusY;
+  //绘制椭圆的api
   ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2);
   // 绘制边框
   ctx.strokeStyle = element.strokeColor || "#8B9CAF";

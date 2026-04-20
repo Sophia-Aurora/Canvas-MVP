@@ -32,8 +32,10 @@ const selectionArea = {
   startY: 0,
   endX: 0,
   endY: 0,
-  isSelecting: false,
 };
+
+// 暴露 selectionArea 到全局作用域
+window.selectionArea = selectionArea;
 
 /**
  * 基础元素类（所有元素类型的基类）
@@ -257,6 +259,26 @@ class TextElement extends BaseElement {
 
   getFontString() {
     return `${this.getFontStyle()} ${this.fontSize}px ${this.fontFamily}`;
+  }
+
+  // 获取文字元素的边界
+  getBounds() {
+    // 创建临时画布上下文来测量文字宽度
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d");
+    tempCtx.font = this.getFontString();
+
+    // 测量文字宽度
+    const width = tempCtx.measureText(this.content).width;
+    // 文字高度大约是字体大小的 1.2 倍
+    const height = this.fontSize * 1.2;
+
+    return {
+      x: this.x,
+      y: this.y,
+      width: width,
+      height: height,
+    };
   }
 }
 

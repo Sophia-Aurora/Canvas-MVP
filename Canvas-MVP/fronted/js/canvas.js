@@ -18,6 +18,19 @@ import {
 } from "./graph.js";
 import { drawImageElement } from "./photo.js";
 
+import {
+  startSelection,
+  doSelection,
+  endSelection,
+  drawSelectionBox,
+  initSelectTool,
+  isDraggingSelection,
+  hasSelectionBox,
+  drawTemporarySelectionBox,
+  drawSolidSelectionBox,
+} from "./select.js";
+import { drawTextElement, startCreatingText, initTextTool } from "./text.js";
+
 // 全局视图控制变量
 let scale = 1; // 缩放比例
 let offsetX = 0; // 画布偏移 X
@@ -79,6 +92,12 @@ function initApp() {
   }
 
   // 其他初始化代码...
+
+  // 初始化选区工具
+  initSelectTool();
+
+  // 初始化文字工具
+  initTextTool();
 }
 
 // 初始化画布
@@ -115,8 +134,27 @@ function initCanvas() {
  * 包括鼠标拖拽、滚轮缩放和键盘快捷键
  */
 function initViewControls() {
-  // 鼠标按下事件 - 开始拖拽
+  // 鼠标按下事件 - 开始拖拽或选区
   canvas.addEventListener("mousedown", (e) => {
+    // 处理选区工具
+    if (window.currentTool === "select") {
+      startSelection(e);
+      return;
+    }
+
+    // 处理文字工具
+    if (window.currentTool === "text") {
+      // 检查是否点击在已有文字元素上
+      import("./text.js").then(({ getTextElementAtPosition }) => {
+        const textElement = getTextElementAtPosition(e);
+        if (!textElement) {
+          // 只有在没有点击已有文字时才创建新文字
+          startCreatingText(e);
+        }
+      });
+      return;
+    }
+
     // 只有未选中工具、左侧面板未打开、且未发生拖拽时才允许拖动画布
     if (
       window.currentTool === null &&
@@ -131,8 +169,14 @@ function initViewControls() {
     }
   });
 
-  // 鼠标移动事件 - 拖拽画布
+  // 鼠标移动事件 - 拖拽画布或选区
   canvas.addEventListener("mousemove", (e) => {
+    // 处理选区工具
+    if (window.currentTool === "select") {
+      doSelection(e);
+      return;
+    }
+
     // 只有未选中工具且正在拖拽时才执行
     if (window.currentTool === null && isCanvasDragging) {
       const deltaX = e.clientX - lastMouseX;
@@ -149,15 +193,25 @@ function initViewControls() {
     }
   });
 
-  // 鼠标释放事件 - 结束拖拽
+  // 鼠标释放事件 - 结束拖拽或选区
   canvas.addEventListener("mouseup", () => {
+    // 处理选区工具
+    if (window.currentTool === "select") {
+      endSelection();
+    }
+
     isCanvasDragging = false;
     isDrawing = false;
     canvas.style.cursor = window.currentTool === null ? "grab" : "default";
   });
 
-  // 鼠标离开画布事件 - 结束拖拽
+  // 鼠标离开画布事件 - 结束拖拽或选区
   canvas.addEventListener("mouseleave", () => {
+    // 处理选区工具
+    if (window.currentTool === "select") {
+      endSelection();
+    }
+
     isCanvasDragging = false;
     isDrawing = false;
     canvas.style.cursor = window.currentTool === null ? "grab" : "default";
@@ -305,6 +359,7 @@ function render() {
         break;
       case "text":
         // 绘制文字
+        drawTextElement(ctx, element);
         break;
       case "image":
         // 绘制图片
@@ -336,7 +391,14 @@ function render() {
     }
   });
 
-  // 5. 恢复绘图状态
+  // 6. 绘制选框
+  if (isDraggingSelection) {
+    drawTemporarySelectionBox(ctx, window.selectionArea);
+  } else if (hasSelectionBox) {
+    drawSolidSelectionBox(ctx, window.selectionArea);
+  }
+
+  // 8. 恢复绘图状态
   //就是恢复画笔的状态，把缩放值啥的都变成0，避免累加
   ctx.restore();
 }

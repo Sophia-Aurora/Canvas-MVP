@@ -47,6 +47,9 @@ function initToolbars() {
   // 初始化字体下拉菜单事件
   initFontSelector();
 
+  // 初始化文字属性滑块事件
+  initTextSliders();
+
   // 初始化画布操作事件
   initCanvasActions();
 
@@ -264,6 +267,16 @@ function initColorGridEvents(sectionId, gridId) {
       colorItems.forEach((other) => other.classList.remove("active"));
       // 添加当前颜色项的active状态
       item.classList.add("active");
+
+      // 同步到当前文字元素（如果是文字颜色选择）
+      if (sectionId === "textColorSection") {
+        import("./main.js").then(({ currentElement }) => {
+          if (currentElement && currentElement.type === "text") {
+            currentElement.fontColor = item.dataset.color;
+            import("./canvas.js").then(({ render }) => render());
+          }
+        });
+      }
     });
   });
 }
@@ -382,6 +395,14 @@ function initFontSelector() {
       fontDisplay.textContent = option.dataset.font;
       // 关闭下拉菜单
       fontDropdown.classList.remove("show");
+
+      // 同步到当前文字元素
+      import("./main.js").then(({ currentElement }) => {
+        if (currentElement && currentElement.type === "text") {
+          currentElement.fontFamily = option.dataset.font;
+          import("./canvas.js").then(({ render }) => render());
+        }
+      });
     });
   });
 
@@ -389,6 +410,14 @@ function initFontSelector() {
   if (boldBtn) {
     boldBtn.addEventListener("click", () => {
       boldBtn.classList.toggle("active");
+
+      // 同步到当前文字元素
+      import("./main.js").then(({ currentElement }) => {
+        if (currentElement && currentElement.type === "text") {
+          currentElement.isBold = boldBtn.classList.contains("active");
+          import("./canvas.js").then(({ render }) => render());
+        }
+      });
     });
   }
 
@@ -396,6 +425,54 @@ function initFontSelector() {
   if (italicBtn) {
     italicBtn.addEventListener("click", () => {
       italicBtn.classList.toggle("active");
+
+      // 同步到当前文字元素
+      import("./main.js").then(({ currentElement }) => {
+        if (currentElement && currentElement.type === "text") {
+          currentElement.isItalic = italicBtn.classList.contains("active");
+          import("./canvas.js").then(({ render }) => render());
+        }
+      });
+    });
+  }
+}
+
+// 初始化文字属性滑块事件
+function initTextSliders() {
+  const textSizeSlider = document.getElementById("textSizeSlider");
+  const textSizeValue = document.getElementById("textSizeValue");
+  const textOpacitySlider = document.getElementById("textOpacitySlider");
+  const textOpacityValue = document.getElementById("textOpacityValue");
+
+  // 文字大小滑块事件
+  if (textSizeSlider && textSizeValue) {
+    textSizeSlider.addEventListener("input", () => {
+      const size = textSizeSlider.value;
+      textSizeValue.textContent = size + "px";
+
+      // 同步到当前文字元素
+      import("./main.js").then(({ currentElement }) => {
+        if (currentElement && currentElement.type === "text") {
+          currentElement.fontSize = parseInt(size);
+          import("./canvas.js").then(({ render }) => render());
+        }
+      });
+    });
+  }
+
+  // 文字透明度滑块事件
+  if (textOpacitySlider && textOpacityValue) {
+    textOpacitySlider.addEventListener("input", () => {
+      const opacity = textOpacitySlider.value;
+      textOpacityValue.textContent = opacity + "%";
+
+      // 同步到当前文字元素
+      import("./main.js").then(({ currentElement }) => {
+        if (currentElement && currentElement.type === "text") {
+          currentElement.opacity = parseInt(opacity) / 100;
+          import("./canvas.js").then(({ render }) => render());
+        }
+      });
     });
   }
 }
